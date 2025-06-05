@@ -181,8 +181,7 @@ namespace Template_Identity.Migrations
                     IdWydarzenia = table.Column<int>(type: "INTEGER", nullable: false),
                     Funkcja = table.Column<int>(type: "INTEGER", nullable: false),
                     Imie = table.Column<string>(type: "TEXT", nullable: false),
-                    Nazwisko = table.Column<string>(type: "TEXT", nullable: false),
-                    AdresEmail = table.Column<string>(type: "TEXT", nullable: false)
+                    Nazwisko = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

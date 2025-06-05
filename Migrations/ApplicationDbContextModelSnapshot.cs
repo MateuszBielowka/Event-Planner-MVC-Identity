@@ -219,10 +219,6 @@ namespace Template_Identity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AdresEmail")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("Funkcja")
                         .HasColumnType("INTEGER");
 

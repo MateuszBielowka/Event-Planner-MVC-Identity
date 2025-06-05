@@ -11,7 +11,7 @@ using Template_Identity.Data;
 namespace Template_Identity.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250605143433_InitialCreate")]
+    [Migration("20250605174438_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -221,10 +221,6 @@ namespace Template_Identity.Migrations
                     b.Property<int>("IdPracownika")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("AdresEmail")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<int>("Funkcja")
                         .HasColumnType("INTEGER");

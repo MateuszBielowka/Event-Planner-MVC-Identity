@@ -7,6 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Template_Identity.Data;
 using Template_Identity.Models;
 using System.Globalization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using System.Text.RegularExpressions;
+using System.Net.Mail;
 
 namespace Template_Identity.Controllers;
 [Authorize(Roles = "Admin,Manager,Volunteer")]
@@ -30,12 +34,28 @@ public class HomeController : Controller
         return View();
     }
 
-    
+    public bool IsValid(string emailaddress)
+    {
+        try
+        {
+            MailAddress m = new MailAddress(emailaddress);
+
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+    }
+
+
     public IActionResult DodajPracownikow() => View();
     [HttpPost]
-    public IActionResult DodajPracownikow(int idwydarzenia1, string funkcja1, string imie1, string nazwisko1, string adresemail1)
+    public async Task<IActionResult> DodajPracownikow(string adresemail1, string haslo, int idwydarzenia1, string funkcja1, string imie1, string nazwisko1)
     {
-        if (string.IsNullOrEmpty(idwydarzenia1.ToString()) || string.IsNullOrEmpty(funkcja1) || string.IsNullOrEmpty(imie1) || string.IsNullOrEmpty(nazwisko1) || string.IsNullOrEmpty(adresemail1))
+        var userManager = HttpContext.RequestServices.GetService(typeof(UserManager<IdentityUser>)) as UserManager<IdentityUser>;
+        if (string.IsNullOrEmpty(adresemail1) || string.IsNullOrEmpty(haslo) || string.IsNullOrEmpty(idwydarzenia1.ToString())
+        || string.IsNullOrEmpty(funkcja1) || string.IsNullOrEmpty(imie1) || string.IsNullOrEmpty(nazwisko1))
         {
             ViewBag.Error = "Wszystkie pola są wymagane.";
             return View();
@@ -46,16 +66,60 @@ public class HomeController : Controller
             ViewBag.Error = "Niepoprawna funkcja.";
             return View();
         }
+        string passwordPattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$";
+
+        if (!IsValid(adresemail1))
+        {
+            ViewBag.Error = "Adres email nie spełnia wymagań";
+            return View();
+        }
+
+
+
+        var existingUser = await userManager.FindByEmailAsync(adresemail1);
+        if (existingUser != null)
+        {
+            ViewBag.Error = "Użytkownik o podanym adresie e-mail już istnieje.";
+            return View();
+        }
+        var newUser = new IdentityUser{ UserName = adresemail1, Email = adresemail1};
+        var result = await userManager.CreateAsync(newUser, haslo);
+        if (!result.Succeeded)
+        {
+            ViewBag.Error = "Błąd podczas tworzenia użytkownika: " + string.Join(", ", result.Errors.Select(e => e.Description));
+            return View();
+        }
+        
 
         _context.Pracownicy.Add(new Pracownik
         {
+            Id = newUser.Id,
             IdWydarzenia = idwydarzenia1,
             Funkcja = funkcja,
             Imie = imie1,
             Nazwisko = nazwisko1,
-            AdresEmail = adresemail1
         });
-        _context.SaveChanges();
+        string role = "";
+        if (funkcja == Funkcja.Wolontariusz)
+        {
+            role = "Volunteer";
+        }
+        else if (funkcja == Funkcja.Menadżer)
+        {
+            role = "Manager";
+        }
+        else if (funkcja == Funkcja.Administrator)
+        {
+            role = "Admin";
+        }
+        else
+        {
+            ViewBag.Error = "Niepoprawna funkcja.";
+            return View();
+        }
+        var roleResult = await userManager.AddToRoleAsync(newUser, role);
+        
+        await _context.SaveChangesAsync();
         return RedirectToAction("ListaPracownikow");
     }
 
@@ -208,35 +272,53 @@ public class HomeController : Controller
         return RedirectToAction("ListaZadan");
     }
 
-    public IActionResult EdytujZadanie(int id)
-    {
-        var ZadanieInDb = _context.Zadania.SingleOrDefault(zadanie => zadanie.IdZadania == id);
-        // _context.Zadania.Remove(ZadanieInDb);
-        // _context.SaveChanges();
+    // public async Task<IActionResult> EdytujZadanie(int? id)
+    // {
+    //     if (id == null)
+    //     {
+    //         return NotFound();
+    //     }
 
-        return View(ZadanieInDb);
-    }
+    //     var course = await _context.Zadania
+    //         .AsNoTracking()
+    //         .FirstOrDefaultAsync(m => m.IdZadania == id);
+    //     if (course == null)
+    //     {
+    //         return NotFound();
+    //     }
+    //     PopulateDepartmentsDropDownList(course.DepartmentID);
+    //     return View(course);
+    // }
 
-    [HttpPost]
-    public IActionResult EdytujZadanie(Zadanie zadanie)
-    {
-        _context.Zadania.Update(zadanie);
-        _context.SaveChanges();
-        return RedirectToAction("ListaZadan");
-    }
+    // public IActionResult EdytujZadanie(int id)
+    // {
+    //     var ZadanieInDb = _context.Zadania.SingleOrDefault(zadanie => zadanie.IdZadania == id);
+    //     // _context.Zadania.Remove(ZadanieInDb);
+    //     // _context.SaveChanges();
+
+    //     return View(ZadanieInDb);
+    // }
 
     // [HttpPost]
-    // public IActionResult EdytujZadanie(string task, string date, int id)
+    // public IActionResult EdytujZadanie(Zadanie zadanie)
     // {
-    //     _context.Zadania.Add(new Zadanie
-    //     {
-    //         IdPracownika = id,
-    //         Nazwa = task,
-    //         Termin = date
-    //     });
+    //     _context.Zadania.Update(zadanie);
     //     _context.SaveChanges();
     //     return RedirectToAction("ListaZadan");
     // }
+
+    [HttpPost]
+    public IActionResult EdytujZadanie(string Nazwa, string Termin, int IdPracownika)
+    {
+        _context.Zadania.Add(new Zadanie
+        {
+            Nazwa = Nazwa,
+            Termin = Termin,
+            IdPracownika = IdPracownika
+        });
+        _context.SaveChanges();
+        return RedirectToAction("ListaZadan");
+    }
 
     public IActionResult UsunZadanie(int id)
     {
@@ -321,10 +403,20 @@ public class HomeController : Controller
         ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
         ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
         ViewData["CurrentFilter"] = searchString;
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var pracownik = _context.Pracownicy.FirstOrDefault(p => p.Id == userId);
 
-        var wydatki = from s in _context.Wydatki
-                      select s;
+        var wydatki = _context.Wydatki.AsQueryable();
 
+        if (User.IsInRole("Manager"))
+        {
+            if (pracownik == null)
+            {
+                return NotFound("Nie znaleziono przypisanego pracownika.");
+            }
+            wydatki = wydatki.Where(w => w.Pracownik.IdWydarzenia == pracownik.IdWydarzenia);
+        }
+        
         if (!string.IsNullOrEmpty(searchString))
         {
             wydatki = wydatki.Where(s => s.IdPracownika.ToString().Contains(searchString)
@@ -347,19 +439,41 @@ public class HomeController : Controller
                 wydatki = wydatki.OrderBy(s => s.IdPracownika);
                 break;
         }
+
+        var posortowaneWydatki = wydatki.ToList();
+        var sumaWydatkow = posortowaneWydatki.Sum(x => x.Kwota);
+        ViewBag.Wydatki = sumaWydatkow;
+
         return View(await wydatki.AsNoTracking().ToListAsync());
     }
     
-    [Authorize(Roles = "Admin, Manager, Volunteer")]
+      [Authorize(Roles = "Admin, Manager, Volunteer")]
     public async Task<IActionResult> ListaZadan(string sortOrder, string searchString)
     {
         ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
         ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
         ViewData["CurrentFilter"] = searchString;
-       
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var pracownik = _context.Pracownicy.FirstOrDefault(p => p.Id == userId);
 
-        var zadania = from s in _context.Zadania
-                      select s;
+        var zadania = _context.Zadania.AsQueryable();
+
+        if (User.IsInRole("Volunteer"))
+        {
+            if (pracownik == null)
+            {
+                return NotFound("Nie znaleziono przypisanego pracownika.");
+            }
+            zadania = zadania.Where(z => z.IdPracownika == pracownik.IdPracownika);
+        }
+        else if (User.IsInRole("Manager"))
+        {
+            if (pracownik == null)
+            {
+                return NotFound("Nie znaleziono przypisanego pracownika.");
+            }
+            zadania = zadania.Where(z => z.Pracownik.IdWydarzenia == pracownik.IdWydarzenia);
+        }
 
         if (!string.IsNullOrEmpty(searchString))
         {
