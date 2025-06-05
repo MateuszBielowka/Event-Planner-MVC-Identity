@@ -1,11 +1,17 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Template_Identity.Data;
 
 public class Program
 {
+    
     public static async Task Main(string[] args)
     {
+        var cultureInfo = new System.Globalization.CultureInfo("pl-PL");
+        CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+        CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -58,7 +64,7 @@ public class Program
                     await roleManager.CreateAsync(new IdentityRole(role));
                 }
             }
-            
+
         }
         using (var scope = app.Services.CreateScope())
         {

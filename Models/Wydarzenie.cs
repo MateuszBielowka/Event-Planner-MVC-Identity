@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore.Sqlite;
 using System.ComponentModel.DataAnnotations;
+
 public class Wydarzenie
 {
     [Key]

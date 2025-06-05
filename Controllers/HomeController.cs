@@ -6,11 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Template_Identity.Data;
 using Template_Identity.Models;
+using System.Globalization;
 
 namespace Template_Identity.Controllers;
 [Authorize(Roles = "Admin,Manager,Volunteer")]
 public class HomeController : Controller
 {
+
+
     private readonly ApplicationDbContext _context;
     public HomeController(ApplicationDbContext context)
     {
@@ -99,6 +102,10 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult DodajWydatek(decimal liczba1, string nazwa1, int liczba2)
     {
+        var cultureInfo = new System.Globalization.CultureInfo("pl-PL");
+        CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+        CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
         if (string.IsNullOrEmpty(liczba1.ToString()) || string.IsNullOrEmpty(nazwa1))
         {
             ViewBag.Error = "Kwota i cel wydatku są wymagane.";
@@ -120,6 +127,7 @@ public class HomeController : Controller
             Cel = nazwa1,
             Kwota = liczba1
         });
+        Console.WriteLine($"Dodano wydatek: {nazwa1} o kwocie {liczba1} dla pracownika o ID {liczba2}");
         _context.SaveChanges();
         return RedirectToAction("ListaWydatkow");
     }
