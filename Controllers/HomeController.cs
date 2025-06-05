@@ -84,7 +84,7 @@ public class HomeController : Controller
             Adres = adres1,
             Data = data1
         });
-        
+
         _context.SaveChanges();
         return RedirectToAction("ListaWydarzen");
     }
@@ -181,9 +181,9 @@ public class HomeController : Controller
     //     return RedirectToAction("ListaZadan");
     // }
     [HttpPost]
-    public IActionResult DodajZadanie(string nazwa1, DateTime data1, int liczba1)
+    public IActionResult DodajZadanie(string nazwa1, string data1, int liczba1)
     {
-        if (string.IsNullOrEmpty(nazwa1) || string.IsNullOrEmpty(data1.ToString()))
+        if (string.IsNullOrEmpty(nazwa1) || string.IsNullOrEmpty(data1))
         {
             ViewBag.Error = "Nazwa i termin zadania są wymagane.";
             return View();
@@ -211,32 +211,32 @@ public class HomeController : Controller
     public IActionResult EdytujZadanie(int id)
     {
         var ZadanieInDb = _context.Zadania.SingleOrDefault(zadanie => zadanie.IdZadania == id);
-        _context.Zadania.Remove(ZadanieInDb);
-        _context.SaveChanges();
+        // _context.Zadania.Remove(ZadanieInDb);
+        // _context.SaveChanges();
 
         return View(ZadanieInDb);
     }
 
-    // [HttpPost]
-    // public IActionResult EdytujZadanie(Zadanie zadanie)
-    // {
-    //     _context.Zadania.Update(zadanie);
-    //     _context.SaveChanges();
-    //     return RedirectToAction("ListaZadan");
-    // }
-
     [HttpPost]
-    public IActionResult EdytujZadanie(string task, DateTime date, int id)
+    public IActionResult EdytujZadanie(Zadanie zadanie)
     {
-        _context.Zadania.Add(new Zadanie
-        {
-            IdPracownika = id,
-            Nazwa = task,
-            Termin = date
-        });
+        _context.Zadania.Update(zadanie);
         _context.SaveChanges();
         return RedirectToAction("ListaZadan");
     }
+
+    // [HttpPost]
+    // public IActionResult EdytujZadanie(string task, string date, int id)
+    // {
+    //     _context.Zadania.Add(new Zadanie
+    //     {
+    //         IdPracownika = id,
+    //         Nazwa = task,
+    //         Termin = date
+    //     });
+    //     _context.SaveChanges();
+    //     return RedirectToAction("ListaZadan");
+    // }
 
     public IActionResult UsunZadanie(int id)
     {
@@ -356,6 +356,7 @@ public class HomeController : Controller
         ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
         ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
         ViewData["CurrentFilter"] = searchString;
+       
 
         var zadania = from s in _context.Zadania
                       select s;

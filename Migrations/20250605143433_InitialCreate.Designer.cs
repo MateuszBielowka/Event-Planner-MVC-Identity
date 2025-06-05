@@ -11,8 +11,8 @@ using Template_Identity.Data;
 namespace Template_Identity.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250605120446_InitialIdentity")]
-    partial class InitialIdentity
+    [Migration("20250605143433_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -229,6 +229,10 @@ namespace Template_Identity.Migrations
                     b.Property<int>("Funkcja")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("IdWydarzenia")
                         .HasColumnType("INTEGER");
 
@@ -241,6 +245,10 @@ namespace Template_Identity.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("IdPracownika");
+
+                    b.HasIndex("Id");
+
+                    b.HasIndex("IdWydarzenia");
 
                     b.ToTable("Pracownicy");
                 });
@@ -285,6 +293,8 @@ namespace Template_Identity.Migrations
 
                     b.HasKey("IdWydatku");
 
+                    b.HasIndex("IdPracownika");
+
                     b.ToTable("Wydatki");
                 });
 
@@ -301,10 +311,13 @@ namespace Template_Identity.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Termin")
+                    b.Property<string>("Termin")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("IdZadania");
+
+                    b.HasIndex("IdPracownika");
 
                     b.ToTable("Zadania");
                 });
@@ -358,6 +371,47 @@ namespace Template_Identity.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Pracownik", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
+                        .WithMany()
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Wydarzenie", "Wydarzenie")
+                        .WithMany()
+                        .HasForeignKey("IdWydarzenia")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IdentityUser");
+
+                    b.Navigation("Wydarzenie");
+                });
+
+            modelBuilder.Entity("Wydatek", b =>
+                {
+                    b.HasOne("Pracownik", "Pracownik")
+                        .WithMany()
+                        .HasForeignKey("IdPracownika")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pracownik");
+                });
+
+            modelBuilder.Entity("Zadanie", b =>
+                {
+                    b.HasOne("Pracownik", "Pracownik")
+                        .WithMany()
+                        .HasForeignKey("IdPracownika")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pracownik");
                 });
 #pragma warning restore 612, 618
         }

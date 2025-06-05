@@ -1,19 +1,24 @@
 @model Zadanie
 
 <h1>Edytuj zadanie</h1>
-@Html.ValidationSummary()
+@* @Html.ValidationSummary() *@
+@if (ViewBag.Error != null)
+{
+    <div style="color:red">@ViewBag.Error</div>
+}
 <form method="post">
     <fieldset>
-        @* <input type="text" name="task" value="@Model.Nazwa" asp-asp-for="Nazwa"/><br />
-        <input type="date" name="date1" value="@Model.Termin" asp-asp-for="Termin"/><br />
-        <input type="number" step="1" name="id" value="@Model.IdPracownika" asp-asp-for="IdPracownika"/><br />
-        <input type="hidden" name="taskid" value="@Model.IdZadania" asp-asp-for="IdZadania"/><br /> *@
+        <input type="text" name="task" asp-for="Nazwa"/><br />
+        <input type="text" name="date1" pattern="\d{2}\.\d{2}\.\d{4}"  asp-for="Termin"/><br />
+        <input type="number" step="1" name="id"  asp-for="IdPracownika"/><br />
+        <input type="hidden" name="taskid" asp-for="IdZadania"/><br />
 
-        <input type="text" name="task" value="@Model.Nazwa" /><br />
-        <input type="date" name="date1" value="@Model.Termin" /><br />
-        <input type="number" step="1" name="id" value="@Model.IdPracownika" /><br />
-        <input type="hidden" name="taskid" value="@Model.IdZadania" /><br />
+        @* <input type="text" name="task" value="@Model.Nazwa" /><br />
+        <input type="text" name="date1" pattern="\d{2}\.\d{2}\.\d{4}" value="@Model.Termin" /><br />
+        <input type="number" step="1" name="id" value="@Model.IdPracownika" /><br /> *@
+        @* <input type="hidden" name="taskid" value="@Model.IdZadania" /><br /> *@
 
-        <p><input type="submit" name="buttonSubmit" value="Zapisz zmiany" /></p>
+        @* <p><input type="submit" name="buttonSubmit" value="Zapisz zmiany" /></p> *@
+        <button type="submit">Zapisz zmiany</button>
     </fieldset>
 </form>

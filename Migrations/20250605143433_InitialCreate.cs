@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Template_Identity.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialIdentity : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,23 +51,6 @@ namespace Template_Identity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Pracownicy",
-                columns: table => new
-                {
-                    IdPracownika = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    IdWydarzenia = table.Column<int>(type: "INTEGER", nullable: false),
-                    Funkcja = table.Column<int>(type: "INTEGER", nullable: false),
-                    Imie = table.Column<string>(type: "TEXT", nullable: false),
-                    Nazwisko = table.Column<string>(type: "TEXT", nullable: false),
-                    AdresEmail = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Pracownicy", x => x.IdPracownika);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Wydarzenia",
                 columns: table => new
                 {
@@ -80,36 +63,6 @@ namespace Template_Identity.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Wydarzenia", x => x.IdWydarzenia);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Wydatki",
-                columns: table => new
-                {
-                    IdWydatku = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    IdPracownika = table.Column<int>(type: "INTEGER", nullable: false),
-                    Cel = table.Column<string>(type: "TEXT", nullable: false),
-                    Kwota = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Wydatki", x => x.IdWydatku);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Zadania",
-                columns: table => new
-                {
-                    IdZadania = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    IdPracownika = table.Column<int>(type: "INTEGER", nullable: false),
-                    Nazwa = table.Column<string>(type: "TEXT", nullable: false),
-                    Termin = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Zadania", x => x.IdZadania);
                 });
 
             migrationBuilder.CreateTable(
@@ -218,6 +171,78 @@ namespace Template_Identity.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Pracownicy",
+                columns: table => new
+                {
+                    IdPracownika = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
+                    IdWydarzenia = table.Column<int>(type: "INTEGER", nullable: false),
+                    Funkcja = table.Column<int>(type: "INTEGER", nullable: false),
+                    Imie = table.Column<string>(type: "TEXT", nullable: false),
+                    Nazwisko = table.Column<string>(type: "TEXT", nullable: false),
+                    AdresEmail = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pracownicy", x => x.IdPracownika);
+                    table.ForeignKey(
+                        name: "FK_Pracownicy_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Pracownicy_Wydarzenia_IdWydarzenia",
+                        column: x => x.IdWydarzenia,
+                        principalTable: "Wydarzenia",
+                        principalColumn: "IdWydarzenia",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wydatki",
+                columns: table => new
+                {
+                    IdWydatku = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    IdPracownika = table.Column<int>(type: "INTEGER", nullable: false),
+                    Cel = table.Column<string>(type: "TEXT", nullable: false),
+                    Kwota = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wydatki", x => x.IdWydatku);
+                    table.ForeignKey(
+                        name: "FK_Wydatki_Pracownicy_IdPracownika",
+                        column: x => x.IdPracownika,
+                        principalTable: "Pracownicy",
+                        principalColumn: "IdPracownika",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Zadania",
+                columns: table => new
+                {
+                    IdZadania = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    IdPracownika = table.Column<int>(type: "INTEGER", nullable: false),
+                    Nazwa = table.Column<string>(type: "TEXT", nullable: false),
+                    Termin = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Zadania", x => x.IdZadania);
+                    table.ForeignKey(
+                        name: "FK_Zadania_Pracownicy_IdPracownika",
+                        column: x => x.IdPracownika,
+                        principalTable: "Pracownicy",
+                        principalColumn: "IdPracownika",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -254,6 +279,26 @@ namespace Template_Identity.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pracownicy_Id",
+                table: "Pracownicy",
+                column: "Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pracownicy_IdWydarzenia",
+                table: "Pracownicy",
+                column: "IdWydarzenia");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wydatki_IdPracownika",
+                table: "Wydatki",
+                column: "IdPracownika");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Zadania_IdPracownika",
+                table: "Zadania",
+                column: "IdPracownika");
         }
 
         /// <inheritdoc />
@@ -275,12 +320,6 @@ namespace Template_Identity.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Pracownicy");
-
-            migrationBuilder.DropTable(
-                name: "Wydarzenia");
-
-            migrationBuilder.DropTable(
                 name: "Wydatki");
 
             migrationBuilder.DropTable(
@@ -290,7 +329,13 @@ namespace Template_Identity.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Pracownicy");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Wydarzenia");
         }
     }
 }
