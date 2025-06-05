@@ -11,8 +11,8 @@ using Template_Identity.Data;
 namespace Template_Identity.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250605100533_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250605120446_InitialIdentity")]
+    partial class InitialIdentity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -280,8 +280,8 @@ namespace Template_Identity.Migrations
                     b.Property<int>("IdPracownika")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Kwota")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Kwota")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("IdWydatku");
 

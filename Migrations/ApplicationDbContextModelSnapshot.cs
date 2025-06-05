@@ -277,8 +277,8 @@ namespace Template_Identity.Migrations
                     b.Property<int>("IdPracownika")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Kwota")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Kwota")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("IdWydatku");
 

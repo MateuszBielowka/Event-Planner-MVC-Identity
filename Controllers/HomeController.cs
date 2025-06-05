@@ -100,7 +100,7 @@ public class HomeController : Controller
     [Authorize(Roles = "Admin, Manager")]
     public IActionResult DodajWydatek() => View();
     [HttpPost]
-    public IActionResult DodajWydatek(decimal liczba1, string nazwa1, int liczba2)
+    public IActionResult DodajWydatek(int liczba1, string nazwa1, int liczba2)
     {
         var cultureInfo = new System.Globalization.CultureInfo("pl-PL");
         CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
