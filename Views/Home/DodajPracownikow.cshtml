@@ -1,0 +1,19 @@
+<h2>Dodaj Pracownika</h2>
+
+
+@if (ViewBag.Error != null)
+{
+    <div style="color:red">@ViewBag.Error</div>
+}
+<form method="post">
+    <input type="number" name="idwydarzenia1" step="1" placeholder="Id wydarzenia" /><br />
+    <select name="funkcja1">
+        <option value="Administrator">Administrator</option>
+        <option value="Menadżer">Menadżer</option>
+        <option value="Wolontariusz">Wolontariusz</option>
+    </select><br />
+    <input type="text" name="imie1" placeholder="Imie" /><br />
+    <input type="text" name="nazwisko1" placeholder="Nazwisko" /><br />
+    <input type="text" name="adresemail1" placeholder="Adres email" /><br />
+    <button type="submit">Zapisz</button>
+</form>

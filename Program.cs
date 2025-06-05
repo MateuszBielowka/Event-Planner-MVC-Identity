@@ -75,6 +75,36 @@ public class Program
                 }
             }
         }
+        using (var scope = app.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var userEmail = "manager@manager.com";
+            var adminPassword = "Manager@123";
+            if (await userManager.FindByEmailAsync(userEmail) == null)
+            {
+                var baseUser = new IdentityUser { UserName = userEmail, Email = userEmail };
+                var result = await userManager.CreateAsync(baseUser, adminPassword);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(baseUser, "Manager");
+                }
+            }
+        }
+        using (var scope = app.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var userEmail = "user@user.com";
+            var adminPassword = "User@123";
+            if (await userManager.FindByEmailAsync(userEmail) == null)
+            {
+                var baseUser = new IdentityUser { UserName = userEmail, Email = userEmail };
+                var result = await userManager.CreateAsync(baseUser, adminPassword);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(baseUser, "Volunteer");
+                }
+            }
+        }
 
         await app.RunAsync();
     }
