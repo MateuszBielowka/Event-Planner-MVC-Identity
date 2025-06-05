@@ -11,7 +11,7 @@ using Template_Identity.Data;
 namespace Template_Identity.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250605075948_InitialCreate")]
+    [Migration("20250605100533_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

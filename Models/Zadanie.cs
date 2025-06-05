@@ -9,3 +9,4 @@ public class Zadanie
     public string Nazwa { get; set; }
     public DateTime Termin { get; set; }
 }
+
