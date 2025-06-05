@@ -18,7 +18,6 @@ public class Pracownik
     public Funkcja Funkcja { get; set; }
     public string Imie { get; set; }
     public string Nazwisko { get; set; }
-    public string AdresEmail { get; set; }
 }
 
 public enum Funkcja

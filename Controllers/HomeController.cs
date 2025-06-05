@@ -7,8 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Template_Identity.Data;
 using Template_Identity.Models;
 using System.Globalization;
+using System.Security.Claims;
 
 namespace Template_Identity.Controllers;
+
 [Authorize(Roles = "Admin,Manager,Volunteer")]
 public class HomeController : Controller
 {
@@ -30,7 +32,7 @@ public class HomeController : Controller
         return View();
     }
 
-    
+
     public IActionResult DodajPracownikow() => View();
     [HttpPost]
     public IActionResult DodajPracownikow(int idwydarzenia1, string funkcja1, string imie1, string nazwisko1, string adresemail1)
@@ -40,7 +42,7 @@ public class HomeController : Controller
             ViewBag.Error = "Wszystkie pola są wymagane.";
             return View();
         }
-        
+
         if (!Enum.TryParse<Funkcja>(funkcja1, out var funkcja))
         {
             ViewBag.Error = "Niepoprawna funkcja.";
@@ -53,7 +55,7 @@ public class HomeController : Controller
             Funkcja = funkcja,
             Imie = imie1,
             Nazwisko = nazwisko1,
-            AdresEmail = adresemail1
+
         });
         _context.SaveChanges();
         return RedirectToAction("ListaPracownikow");
@@ -113,7 +115,7 @@ public class HomeController : Controller
         }
 
         var pracownicy = from s in _context.Pracownicy
-                      select s;
+                         select s;
         pracownicy = pracownicy.Where(s => s.IdPracownika == liczba2);
         if (!pracownicy.Any())
         {
@@ -190,7 +192,7 @@ public class HomeController : Controller
         }
 
         var pracownicy = from s in _context.Pracownicy
-                      select s;
+                         select s;
         pracownicy = pracownicy.Where(s => s.IdPracownika == liczba1);
         if (!pracownicy.Any())
         {
@@ -254,7 +256,7 @@ public class HomeController : Controller
         ViewData["CurrentFilter"] = searchString;
 
         var pracownicy = from s in _context.Pracownicy
-                      select s;
+                         select s;
 
         if (!string.IsNullOrEmpty(searchString))
         {
@@ -314,7 +316,7 @@ public class HomeController : Controller
         }
         return View(await wydarzenia.AsNoTracking().ToListAsync());
     }
-    
+
     [Authorize(Roles = "Admin, Manager")]
     public async Task<IActionResult> ListaWydatkow(string sortOrder, string searchString)
     {
@@ -349,17 +351,34 @@ public class HomeController : Controller
         }
         return View(await wydatki.AsNoTracking().ToListAsync());
     }
-    
+
     [Authorize(Roles = "Admin, Manager, Volunteer")]
     public async Task<IActionResult> ListaZadan(string sortOrder, string searchString)
     {
         ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
         ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
         ViewData["CurrentFilter"] = searchString;
-       
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var pracownik = _context.Pracownicy.FirstOrDefault(p => p.Id == userId);
 
-        var zadania = from s in _context.Zadania
-                      select s;
+        var zadania = _context.Zadania.AsQueryable();
+
+        if (User.IsInRole("Volunteer"))
+        {
+            if (pracownik == null)
+            {
+                return NotFound("Nie znaleziono przypisanego pracownika.");
+            }
+            zadania = zadania.Where(z => z.IdPracownika == pracownik.IdPracownika);
+        }
+        else if (User.IsInRole("Manager"))
+        {
+            if (pracownik == null)
+            {
+                return NotFound("Nie znaleziono przypisanego pracownika.");
+            }
+            zadania = zadania.Where(z => z.Pracownik.IdWydarzenia == pracownik.IdWydarzenia);
+        }
 
         if (!string.IsNullOrEmpty(searchString))
         {
