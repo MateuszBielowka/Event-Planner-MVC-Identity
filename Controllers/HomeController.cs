@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Net.Mail;
 
 namespace Template_Identity.Controllers;
+
 [Authorize(Roles = "Admin,Manager,Volunteer")]
 public class HomeController : Controller
 {
@@ -60,7 +61,7 @@ public class HomeController : Controller
             ViewBag.Error = "Wszystkie pola są wymagane.";
             return View();
         }
-        
+
         if (!Enum.TryParse<Funkcja>(funkcja1, out var funkcja))
         {
             ViewBag.Error = "Niepoprawna funkcja.";
@@ -177,7 +178,7 @@ public class HomeController : Controller
         }
 
         var pracownicy = from s in _context.Pracownicy
-                      select s;
+                         select s;
         pracownicy = pracownicy.Where(s => s.IdPracownika == liczba2);
         if (!pracownicy.Any())
         {
@@ -254,7 +255,7 @@ public class HomeController : Controller
         }
 
         var pracownicy = from s in _context.Pracownicy
-                      select s;
+                         select s;
         pracownicy = pracownicy.Where(s => s.IdPracownika == liczba1);
         if (!pracownicy.Any())
         {
@@ -336,7 +337,7 @@ public class HomeController : Controller
         ViewData["CurrentFilter"] = searchString;
 
         var pracownicy = from s in _context.Pracownicy
-                      select s;
+                         select s;
 
         if (!string.IsNullOrEmpty(searchString))
         {
@@ -396,7 +397,7 @@ public class HomeController : Controller
         }
         return View(await wydarzenia.AsNoTracking().ToListAsync());
     }
-    
+
     [Authorize(Roles = "Admin, Manager")]
     public async Task<IActionResult> ListaWydatkow(string sortOrder, string searchString)
     {
@@ -474,7 +475,6 @@ public class HomeController : Controller
             }
             zadania = zadania.Where(z => z.Pracownik.IdWydarzenia == pracownik.IdWydarzenia);
         }
-
         if (!string.IsNullOrEmpty(searchString))
         {
             zadania = zadania.Where(s => s.IdPracownika.ToString().Contains(searchString)

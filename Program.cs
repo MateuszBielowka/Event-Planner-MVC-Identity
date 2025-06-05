@@ -6,6 +6,7 @@ using Template_Identity.Data;
 public class Program
 {
 
+
     public static async Task Main(string[] args)
     {
         var cultureInfo = new System.Globalization.CultureInfo("pl-PL");
@@ -72,6 +73,24 @@ public class Program
 
         using (var scope = app.Services.CreateScope())
         {
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            if (!dbContext.Wydarzenia.Any(w => w.IdWydarzenia == 1))
+            {
+                dbContext.Wydarzenia.Add(new Wydarzenie
+                {
+                    IdWydarzenia = 1,
+                    Nazwa = "Wydarzenie przykładowe",
+                    Adres = "ul. Przykładowa 1",
+                    Data = DateTime.Now.AddDays(7)
+                });
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+
+        using (var scope = app.Services.CreateScope())
+        {
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             var roles = new[] { "Admin", "Manager", "Volunteer" };
@@ -112,6 +131,15 @@ public class Program
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(baseUser, "Manager");
+                    dbContext.Pracownicy.Add(new Pracownik
+                    {
+                        Id = baseUser.Id,
+                        Imie = "Jan",
+                        Nazwisko = "Kowalski",
+                        Funkcja = Funkcja.Menadżer,
+                        IdWydarzenia = 1
+                    });
+                    await dbContext.SaveChangesAsync();
                     dbContext.Pracownicy.Add(new Pracownik
                     {
                         Id = baseUser.Id,
