@@ -216,6 +216,7 @@ public class HomeController : Controller
     //     _context.SaveChanges();
     //     return RedirectToAction("ListaZadan");
     // }
+
     [HttpPost]
     public IActionResult EdytujZadanie(string task, DateTime date, int id)
     {
