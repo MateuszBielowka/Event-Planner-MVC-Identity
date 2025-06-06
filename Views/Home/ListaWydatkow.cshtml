@@ -31,8 +31,7 @@
             <th>IdWydatku</th>
             <th>IdPracownika</th>
             <th>Cel</th>
-            <th>Kwota</th>
-
+            <th>Kwota (zł)</th>
         </tr>
     </thead>
     <tbody>
@@ -42,7 +41,7 @@
             <td>@w.IdWydatku</td>
             <td>@w.IdPracownika</td>
             <td>@w.Cel</td>
-            <td>@w.Kwota</td>
+            <td class="kwota-grosze">@w.Kwota</td>
             <td> <a asp-action="UsunWydatek" asp-route-id="@w.IdWydatku">Usuń</a></td>
             <td> <a asp-action="EdytujWydatek" asp-route-id="@w.IdWydatku">Edytuj</a></td>
         </tr>
@@ -50,4 +49,21 @@
     </tbody>
 </table>
 
-<h3>Suma wydatków: @ViewBag.Wydatki zł</h3>
+<h3>Suma wydatków: <span id="suma-wydatkow">@ViewBag.Wydatki</span> zł</h3>
+
+<script>
+document.querySelectorAll('.kwota-grosze').forEach(function(td) {
+    var grosze = parseInt(td.textContent, 10);
+    if (!isNaN(grosze)) {
+        td.textContent = (grosze / 100).toFixed(2) + ' zł';
+    }
+});
+
+var suma = document.getElementById('suma-wydatkow');
+if (suma) {
+    var sumaGrosze = parseInt(suma.textContent, 10);
+    if (!isNaN(sumaGrosze)) {
+        suma.textContent = (sumaGrosze / 100).toFixed(2);
+    }
+}
+</script>
