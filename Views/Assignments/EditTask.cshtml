@@ -1,0 +1,18 @@
+@model Assignment
+
+<h1>Edytuj zadanie</h1>
+@* @Html.ValidationSummary() *@
+@if (ViewBag.Error != null)
+{
+    <div style="color:red">@ViewBag.Error</div>
+}
+<form method="post">
+    <fieldset>
+        <input type="text" name="newTaskName" value="@Model.TaskName" /><br />
+        <input type="text" name="newDueDate" pattern="\d{2}\.\d{2}\.\d{4}" value="@Model.DueDate" /><br />
+        <input type="number" step="1" name="newEmployeeId" value="@Model.EmployeeId" /><br />
+        <input type="hidden" name="assignedEmployeeId" value="@Model.AssignmentId" /><br />
+        <p><input type="submit" name="buttonSubmit" value="Submit Changes" /></p>
+
+    </fieldset>
+</form>

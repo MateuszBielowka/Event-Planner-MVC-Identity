@@ -17,6 +17,108 @@ namespace Template_Identity.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.20");
 
+            modelBuilder.Entity("Assignment", b =>
+                {
+                    b.Property<int>("AssignmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("DueDate")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("TaskName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("AssignmentId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Assignments");
+                });
+
+            modelBuilder.Entity("Employee", b =>
+                {
+                    b.Property<int>("EmployeeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EmployeeRole")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("EmployeeId");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("Id");
+
+                    b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("Event", b =>
+                {
+                    b.Property<int>("EventId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EventDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EventName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("EventId");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("Expense", b =>
+                {
+                    b.Property<int>("ExpenseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ExpenseCost")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ExpensePurpose")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ExpenseId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Expenses");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -213,106 +315,45 @@ namespace Template_Identity.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Pracownik", b =>
+            modelBuilder.Entity("Assignment", b =>
                 {
-                    b.Property<int>("IdPracownika")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.HasOne("Employee", "EmployeeRecord")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("Funkcja")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Id")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("IdWydarzenia")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Imie")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Nazwisko")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("IdPracownika");
-
-                    b.HasIndex("Id");
-
-                    b.HasIndex("IdWydarzenia");
-
-                    b.ToTable("Pracownicy");
+                    b.Navigation("EmployeeRecord");
                 });
 
-            modelBuilder.Entity("Wydarzenie", b =>
+            modelBuilder.Entity("Employee", b =>
                 {
-                    b.Property<int>("IdWydarzenia")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.HasOne("Event", "EventRecord")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<string>("Adres")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
+                        .WithMany()
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<DateTime>("Data")
-                        .HasColumnType("TEXT");
+                    b.Navigation("EventRecord");
 
-                    b.Property<string>("Nazwa")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("IdWydarzenia");
-
-                    b.ToTable("Wydarzenia");
+                    b.Navigation("IdentityUser");
                 });
 
-            modelBuilder.Entity("Wydatek", b =>
+            modelBuilder.Entity("Expense", b =>
                 {
-                    b.Property<int>("IdWydatku")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.HasOne("Employee", "EmployeeRecord")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<string>("Cel")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("IdPracownika")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Kwota")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("IdWydatku");
-
-                    b.HasIndex("IdPracownika");
-
-                    b.ToTable("Wydatki");
-                });
-
-            modelBuilder.Entity("Zadanie", b =>
-                {
-                    b.Property<int>("IdZadania")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("IdPracownika")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Nazwa")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Termin")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("IdZadania");
-
-                    b.HasIndex("IdPracownika");
-
-                    b.ToTable("Zadania");
+                    b.Navigation("EmployeeRecord");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -364,47 +405,6 @@ namespace Template_Identity.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Pracownik", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
-                        .WithMany()
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Wydarzenie", "Wydarzenie")
-                        .WithMany()
-                        .HasForeignKey("IdWydarzenia")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("IdentityUser");
-
-                    b.Navigation("Wydarzenie");
-                });
-
-            modelBuilder.Entity("Wydatek", b =>
-                {
-                    b.HasOne("Pracownik", "Pracownik")
-                        .WithMany()
-                        .HasForeignKey("IdPracownika")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pracownik");
-                });
-
-            modelBuilder.Entity("Zadanie", b =>
-                {
-                    b.HasOne("Pracownik", "Pracownik")
-                        .WithMany()
-                        .HasForeignKey("IdPracownika")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pracownik");
                 });
 #pragma warning restore 612, 618
         }

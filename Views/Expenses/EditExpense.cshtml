@@ -1,0 +1,17 @@
+@model Expense
+
+<h1>Edytuj wydatek</h1>
+@if (ViewBag.Error != null)
+{
+    <div style="color:red">@ViewBag.Error</div>
+}
+@* @Html.ValidationSummary() *@
+<form method="post">
+    <fieldset>
+        <input type="number" name="newExpenseCost" value="@Model.ExpenseCost" asp-asp-for="ExpenseCost"/><br />
+        <input type="text" name="newExpenseName" value="@Model.ExpensePurpose" asp-asp-for="ExpensePurpose"/><br />
+        <input type="number" name="assignedEmployeeId" step="1" value="@Model.EmployeeId" asp-asp-for="EmployeeId"/><br />
+
+        <p><input type="submit" name="buttonSubmit" value="Zapisz zmiany" /></p>
+    </fieldset>
+</form>

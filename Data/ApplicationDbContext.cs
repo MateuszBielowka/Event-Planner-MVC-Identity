@@ -6,9 +6,9 @@ namespace Template_Identity.Data;
 public class ApplicationDbContext : IdentityDbContext
 {
 
-    public DbSet<Pracownik> Pracownicy { get; set; }
-    public DbSet<Wydarzenie> Wydarzenia { get; set; }
-    public DbSet<Wydatek> Wydatki { get; set; }
-    public DbSet<Zadanie> Zadania { get; set; }
+    public DbSet<Employee> Employees { get; set; }
+    public DbSet<Event> Events { get; set; }
+    public DbSet<Expense> Expenses { get; set; }
+    public DbSet<Assignment> Assignments { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options){}
 }

@@ -1,0 +1,52 @@
+@model IEnumerable<Assignment>
+
+<h2>Lista Zadań</h2>
+
+<form asp-action="TaskList" method="get">
+    <div class="form-actions no-color">
+        <p>
+            
+            <label>Szukaj nazwy lub id pracownika: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" /></label>
+            <button type="submit">Szukaj</button>
+            <a asp-action="TaskList">Resetuj</table></a>
+        </p>
+    </div>
+</form>
+
+<h5>Sortuj według:</h5>
+<tr>
+    <th>
+        <a asp-action="TaskList" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model =>
+                        model.EmployeeId)</a>
+    </th>
+    <th>
+        <a asp-action="TaskList" asp-route-sortOrder="@ViewData["DateSortParm"]">@Html.DisplayNameFor(model =>
+                        model.DueDate)</a>
+    </th>
+    <th></th>
+</tr>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>IdZadania</th>
+            <th>IdPracownika</th>
+            <th>Nazwa</th>
+            <th>Termin</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var w in Model)
+        {
+            <tr>
+                <td>@w.AssignmentId</td>
+                <td>@w.EmployeeId</td>
+                <td>@w.TaskName</td>
+                <td>@w.DueDate</td>
+                <td> <a asp-action="DeleteTask" asp-route-id="@w.AssignmentId">Usuń</a></td>
+                <td> <a asp-action="EditTask" asp-route-id="@w.AssignmentId">Edytuj</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

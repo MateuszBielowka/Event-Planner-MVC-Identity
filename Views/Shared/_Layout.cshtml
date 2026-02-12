@@ -12,7 +12,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">IdentityTestTemplate</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">EventPlanner 2.0</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -22,47 +22,43 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                                asp-action="Privacy">Privacy</a>
-                        </li>
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="ListaWydarzen">Lista
+                                <a class="nav-link text-dark" asp-controller="Events" asp-action="EventsOverview">Lista
                                     Wydarzeń</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="DodajWydarzenia">Dodaj wydarzenia</a>
+                                <a class="nav-link text-dark" asp-controller="Events" asp-action="AddEvent">Dodaj wydarzenia</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="DodajPracownikow">Dodaj
+                                <a class="nav-link text-dark" asp-controller="Employees" asp-action="AddEmployee">Dodaj
                                     Pracownika</a>
                             </li>
                         }
                         @if (User.IsInRole("Admin") || User.IsInRole("Manager")) 
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="ListaPracownikow">Lista
+                                <a class="nav-link text-dark" asp-controller="Employees" asp-action="EmployeesOverview">Lista
                                     Pracowników</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="ListaWydatkow">Lista
+                                <a class="nav-link text-dark" asp-controller="Expenses" asp-action="ExpensesOverview">Lista
                                     Wydatków</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="DodajWydatek">Dodaj
+                                <a class="nav-link text-dark" asp-controller="Expenses" asp-action="AddExpense">Dodaj
                                     Wydatek</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="DodajZadanie">Dodaj
+                                <a class="nav-link text-dark" asp-controller="Assignments" asp-action="AddTask">Dodaj
                                     Zadanie</a>
                             </li>
                         }
                         @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Volunteer"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Home" asp-action="ListaZadan">Lista Zadań</a>
+                                <a class="nav-link text-dark" asp-controller="Assignments" asp-action="TaskList">Lista Zadań</a>
                             </li>
                         }
                         
@@ -80,7 +76,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - Template_Identity - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - Based on MVC Identity Template - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -1,0 +1,51 @@
+@model IEnumerable<Employee>
+
+<h2>Lista Pracowników</h2>
+
+<form asp-action="EmployeesOverview" method="get">
+    <div class="form-actions no-color">
+        <p>
+            <label>Szukaj imienia, nazwiska lub id pracownika: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" /></label>
+            <button type="submit">Szukaj</button>
+            <a asp-action="EmployeesOverview">Resetuj</table></a>
+        </p>
+    </div>
+</form>
+
+<h5>Sortuj według:</h5>
+<tr>
+    <th>
+        <a asp-action="EmployeesOverview" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model =>
+                        model.FirstName)</a>
+    </th>
+    <th>
+        <a asp-action="EmployeesOverview" asp-route-sortOrder="@ViewData["DateSortParm"]">@Html.DisplayNameFor(model =>
+                        model.EmployeeRole)</a>
+    </th>
+    <th></th>
+</tr>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+            <th>Funkcja</th>
+            <th>Id Wydarzenia</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach(var p in Model)
+    {
+        <tr>
+            <td>@p.EmployeeId</td>
+            <td>@p.FirstName</td>
+            <td>@p.Surname</td>
+            <td>@p.EmployeeRole</td>
+            <td>@p.EventId</td>
+            <td> <a asp-action="DeleteEmployee" asp-route-id="@p.EmployeeId">Usuń</a></td>
+        </tr>
+    }
+    </tbody>
+</table>

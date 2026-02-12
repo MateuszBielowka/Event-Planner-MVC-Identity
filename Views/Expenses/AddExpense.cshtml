@@ -1,0 +1,23 @@
+<h2>Dodaj Wydatek</h2>
+
+
+@if (ViewBag.Error != null)
+{
+    <div style="color:red">@ViewBag.Error</div>
+}
+<form method="post" itemid="=" id="wydatekForm" action="/Expenses/AddExpense">
+    <input type="number" step="0.01" id="cost" placeholder="Kwota" />
+    <input type="hidden" name="newExpenseCost" id="newExpenseCost" />
+    <input type="text" name="newExpenseName" placeholder="Cel" /><br />
+    <input type="number" name="assignedEmployeeId" step="1" placeholder="Id pracownika" /><br />
+
+    <button type="submit">Zapisz</button>
+</form>
+
+<script>
+document.getElementById('wydatekForm').addEventListener('submit', function(e) {
+    var cost = document.getElementById('cost').value.replace(',', '.');
+    var costInCents = Math.round(parseFloat(cost) * 100);
+    document.getElementById('newExpenseCost').value = isNaN(costInCents) ? 0 : costInCents;
+});
+</script>

@@ -1,0 +1,14 @@
+<h2>Dodaj Zadanie</h2>
+
+
+@if (ViewBag.Error != null)
+{
+    <div style="color:red">@ViewBag.Error</div>
+}
+<form method="post">
+    <input type="text" name="newTaskName" placeholder="Zadanie"/><br />
+    <input type="text" name="newDueDate" pattern="\d{2}\.\d{2}\.\d{4}" placeholder="DD.MM.YYYY"/><br />
+    <input type="number" step="1" name="assignedEmployeeId" placeholder="Id pracownika"/><br />
+
+    <button type="submit">Zapisz</button>
+</form>

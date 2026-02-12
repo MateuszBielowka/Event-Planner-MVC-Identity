@@ -1,0 +1,69 @@
+@model IEnumerable<Expense>
+
+<h2>Lista Wydatków</h2>
+
+<form asp-action="ExpensesOverview" method="get">
+    <div class="form-actions no-color">
+        <p>
+            <label>Szukaj celu lub id pracownika: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" /></label>
+            <button type="submit">Szukaj</button>
+            <a asp-action="ExpensesOverview">Resetuj</table></a>
+        </p>
+    </div>
+</form>
+
+<h5>Sortuj według:</h5>
+<tr>
+    <th>
+        <a asp-action="ExpensesOverview" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model =>
+                        model.EmployeeId)</a>
+    </th>
+    <th>
+        <a asp-action="ExpensesOverview" asp-route-sortOrder="@ViewData["DateSortParm"]">@Html.DisplayNameFor(model =>
+                        model.ExpenseCost)</a>
+    </th>
+    <th></th>
+</tr>
+
+<table class="table" itemid="1" id="expenses_overview" action="/Expenses/ExpensesOverview">
+    <thead>
+        <tr>
+            <th>IdWydatku</th>
+            <th>IdPracownika</th>
+            <th>Cel</th>
+            <th>Kwota (zł)</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach(var w in Model)
+    {
+        <tr>
+            <td>@w.ExpenseId</td>
+            <td>@w.EmployeeId</td>
+            <td>@w.ExpensePurpose</td>
+            <td class="cost-in-cents">@w.ExpenseCost</td>
+            <td> <a asp-action="DeleteExpense" asp-route-id="@w.ExpenseId">Usuń</a></td>
+            <td> <a asp-action="EditExpense" asp-route-id="@w.ExpenseId">Edytuj</a></td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h3>Suma wydatków: <span id="expenses_sum">@ViewBag.Expenses</span> zł</h3>
+
+<script>
+document.querySelectorAll('.cost-in-cents').forEach(function(td) {
+    var costInCents = parseInt(td.textContent, 10);
+    if (!isNaN(costInCents)) {
+        td.textContent = (costInCents / 100).toFixed(2) + ' zł';
+    }
+});
+
+var costsSum = document.getElementById('expenses_sum');
+if (costsSum) {
+    var costsSumInCents = parseInt(costsSum.textContent, 10);
+    if (!isNaN(costsSumInCents)) {
+        costsSum.textContent = (costsSumInCents / 100).toFixed(2);
+    }
+}
+</script>

@@ -5,8 +5,6 @@ using Template_Identity.Data;
 
 public class Program
 {
-
-
     public static async Task Main(string[] args)
     {
         var cultureInfo = new System.Globalization.CultureInfo("pl-PL");
@@ -15,7 +13,6 @@ public class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite(connectionString));
@@ -41,13 +38,7 @@ public class Program
             app.UseHsts();
         }
 
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
-
-        app.UseRouting();
-
-        app.UseAuthorization();
-
+        app.UseHttpsRedirection(); app.UseStaticFiles(); app.UseRouting(); app.UseAuthorization();
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -57,37 +48,18 @@ public class Program
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            if (!dbContext.Wydarzenia.Any(w => w.IdWydarzenia == 1))
+            if (!dbContext.Events.Any(w => w.EventId == 1))
             {
-                dbContext.Wydarzenia.Add(new Wydarzenie
+                dbContext.Events.Add(new Event
                 {
-                    IdWydarzenia = 1,
-                    Nazwa = "Wydarzenie przykładowe",
-                    Adres = "ul. Przykładowa 1",
-                    Data = DateTime.Now.AddDays(7)
+                    EventId = 1,
+                    EventName = "Wydarzenie przykładowe",
+                    Address = "ul. Przykładowa 1",
+                    EventDate = DateTime.Now.AddDays(7)
                 });
                 await dbContext.SaveChangesAsync();
             }
         }
-
-
-        using (var scope = app.Services.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-            if (!dbContext.Wydarzenia.Any(w => w.IdWydarzenia == 1))
-            {
-                dbContext.Wydarzenia.Add(new Wydarzenie
-                {
-                    IdWydarzenia = 1,
-                    Nazwa = "Wydarzenie przykładowe",
-                    Adres = "ul. Przykładowa 1",
-                    Data = DateTime.Now.AddDays(7)
-                });
-                await dbContext.SaveChangesAsync();
-            }
-        }
-
 
         using (var scope = app.Services.CreateScope())
         {
@@ -99,85 +71,47 @@ public class Program
                 if (!await roleManager.RoleExistsAsync(role))
                 {
                     await roleManager.CreateAsync(new IdentityRole(role));
-                }
+                } 
             }
+        }
 
-        }
-        using (var scope = app.Services.CreateScope())
-        {
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-            var adminEmail = "admin@admin.com";
-            var adminPassword = "Admin@123";
-            if (await userManager.FindByEmailAsync(adminEmail) == null)
-            {
-                var adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
-                var result = await userManager.CreateAsync(adminUser, adminPassword);
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(adminUser, "Admin");
-                }
-            }
-        }
         using (var scope = app.Services.CreateScope())
         {
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var userEmail = "manager@manager.com";
-            var adminPassword = "Manager@123";
-            if (await userManager.FindByEmailAsync(userEmail) == null)
-            {
-                var baseUser = new IdentityUser { UserName = userEmail, Email = userEmail };
-                var result = await userManager.CreateAsync(baseUser, adminPassword);
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(baseUser, "Manager");
-                    dbContext.Pracownicy.Add(new Pracownik
-                    {
-                        Id = baseUser.Id,
-                        Imie = "Jan",
-                        Nazwisko = "Kowalski",
-                        Funkcja = Funkcja.Menadżer,
-                        IdWydarzenia = 1
-                    });
-                    await dbContext.SaveChangesAsync();
-                    dbContext.Pracownicy.Add(new Pracownik
-                    {
-                        Id = baseUser.Id,
-                        Imie = "Jan",
-                        Nazwisko = "Kowalski",
-                        Funkcja = Funkcja.Menadżer,
-                        IdWydarzenia = 1
-                    });
-                    await dbContext.SaveChangesAsync();
-                }
-            }
-        }
-        using (var scope = app.Services.CreateScope())
-        {
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var userEmail = "user@user.com";
-            var adminPassword = "User@123";
-            if (await userManager.FindByEmailAsync(userEmail) == null)
-            {
-                var baseUser = new IdentityUser { UserName = userEmail, Email = userEmail };
-                var result = await userManager.CreateAsync(baseUser, adminPassword);
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(baseUser, "Volunteer");
-                    dbContext.Pracownicy.Add(new Pracownik
-                    {
-                        Id = baseUser.Id,
-                        Imie = "Anna",
-                        Nazwisko = "Nowak",
-                        Funkcja = Funkcja.Wolontariusz,
-                        IdWydarzenia = 1
-                    });
-                    await dbContext.SaveChangesAsync();
-                }
-            }
-        }
 
+            var users = new[]
+            {
+                new { Email = "admin@admin.com", Password = "Admin@123", Role = "Admin", FirstName = "Adam", Surname = "Admin", EmployeeRole = AccessLevel.Admin },
+                new { Email = "manager@manager.com", Password = "Manager@123", Role = "Manager", FirstName = "Jan", Surname = "Kowalski", EmployeeRole = AccessLevel.Manager },
+                new { Email = "user@user.com", Password = "User@123", Role = "Volunteer", FirstName = "Anna", Surname = "Nowak", EmployeeRole = AccessLevel.Volunteer }
+            };
+            foreach (var u in users)
+            {
+                if (await userManager.FindByEmailAsync(u.Email) == null)
+                {
+                    var baseUser = new IdentityUser { UserName = u.Email, Email = u.Email };
+                    var result = await userManager.CreateAsync(baseUser, u.Password);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(baseUser, u.Role);
+                        if (!dbContext.Employees.Any(p => p.Id == baseUser.Id))
+                        {
+                            dbContext.Employees.Add(new Employee
+                            {
+                                Id = baseUser.Id,
+                                FirstName = u.FirstName,
+                                Surname = u.Surname,
+                                EmployeeRole = u.EmployeeRole,
+                                EventId = 1,
+                                EventRecord = dbContext.Events.First(w => w.EventId == 1)
+                            });
+                            await dbContext.SaveChangesAsync();
+                        }
+                    }
+                }
+            }
+        }
         await app.RunAsync();
     }
 }

@@ -51,18 +51,18 @@ namespace Template_Identity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Wydarzenia",
+                name: "Events",
                 columns: table => new
                 {
-                    IdWydarzenia = table.Column<int>(type: "INTEGER", nullable: false)
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Nazwa = table.Column<string>(type: "TEXT", nullable: false),
-                    Adres = table.Column<string>(type: "TEXT", nullable: false),
-                    Data = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    EventName = table.Column<string>(type: "TEXT", nullable: false),
+                    Address = table.Column<string>(type: "TEXT", nullable: false),
+                    EventDate = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Wydarzenia", x => x.IdWydarzenia);
+                    table.PrimaryKey("PK_Events", x => x.EventId);
                 });
 
             migrationBuilder.CreateTable(
@@ -172,73 +172,73 @@ namespace Template_Identity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Pracownicy",
+                name: "Employees",
                 columns: table => new
                 {
-                    IdPracownika = table.Column<int>(type: "INTEGER", nullable: false)
+                    EmployeeId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Id = table.Column<string>(type: "TEXT", nullable: false),
-                    IdWydarzenia = table.Column<int>(type: "INTEGER", nullable: false),
-                    Funkcja = table.Column<int>(type: "INTEGER", nullable: false),
-                    Imie = table.Column<string>(type: "TEXT", nullable: false),
-                    Nazwisko = table.Column<string>(type: "TEXT", nullable: false)
+                    EventId = table.Column<int>(type: "INTEGER", nullable: false),
+                    EmployeeRole = table.Column<int>(type: "INTEGER", nullable: false),
+                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
+                    Surname = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Pracownicy", x => x.IdPracownika);
+                    table.PrimaryKey("PK_Employees", x => x.EmployeeId);
                     table.ForeignKey(
-                        name: "FK_Pracownicy_AspNetUsers_Id",
+                        name: "FK_Employees_AspNetUsers_Id",
                         column: x => x.Id,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Pracownicy_Wydarzenia_IdWydarzenia",
-                        column: x => x.IdWydarzenia,
-                        principalTable: "Wydarzenia",
-                        principalColumn: "IdWydarzenia",
+                        name: "FK_Employees_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "EventId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Wydatki",
+                name: "Assignments",
                 columns: table => new
                 {
-                    IdWydatku = table.Column<int>(type: "INTEGER", nullable: false)
+                    AssignmentId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    IdPracownika = table.Column<int>(type: "INTEGER", nullable: false),
-                    Cel = table.Column<string>(type: "TEXT", nullable: false),
-                    Kwota = table.Column<int>(type: "INTEGER", nullable: false)
+                    EmployeeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TaskName = table.Column<string>(type: "TEXT", nullable: false),
+                    DueDate = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Wydatki", x => x.IdWydatku);
+                    table.PrimaryKey("PK_Assignments", x => x.AssignmentId);
                     table.ForeignKey(
-                        name: "FK_Wydatki_Pracownicy_IdPracownika",
-                        column: x => x.IdPracownika,
-                        principalTable: "Pracownicy",
-                        principalColumn: "IdPracownika",
+                        name: "FK_Assignments_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "EmployeeId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Zadania",
+                name: "Expenses",
                 columns: table => new
                 {
-                    IdZadania = table.Column<int>(type: "INTEGER", nullable: false)
+                    ExpenseId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    IdPracownika = table.Column<int>(type: "INTEGER", nullable: false),
-                    Nazwa = table.Column<string>(type: "TEXT", nullable: false),
-                    Termin = table.Column<string>(type: "TEXT", nullable: false)
+                    EmployeeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ExpensePurpose = table.Column<string>(type: "TEXT", nullable: false),
+                    ExpenseCost = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Zadania", x => x.IdZadania);
+                    table.PrimaryKey("PK_Expenses", x => x.ExpenseId);
                     table.ForeignKey(
-                        name: "FK_Zadania_Pracownicy_IdPracownika",
-                        column: x => x.IdPracownika,
-                        principalTable: "Pracownicy",
-                        principalColumn: "IdPracownika",
+                        name: "FK_Expenses_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "EmployeeId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -280,24 +280,24 @@ namespace Template_Identity.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pracownicy_Id",
-                table: "Pracownicy",
+                name: "IX_Assignments_EmployeeId",
+                table: "Assignments",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_EventId",
+                table: "Employees",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_Id",
+                table: "Employees",
                 column: "Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pracownicy_IdWydarzenia",
-                table: "Pracownicy",
-                column: "IdWydarzenia");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Wydatki_IdPracownika",
-                table: "Wydatki",
-                column: "IdPracownika");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Zadania_IdPracownika",
-                table: "Zadania",
-                column: "IdPracownika");
+                name: "IX_Expenses_EmployeeId",
+                table: "Expenses",
+                column: "EmployeeId");
         }
 
         /// <inheritdoc />
@@ -319,22 +319,22 @@ namespace Template_Identity.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Wydatki");
+                name: "Assignments");
 
             migrationBuilder.DropTable(
-                name: "Zadania");
+                name: "Expenses");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Pracownicy");
+                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Wydarzenia");
+                name: "Events");
         }
     }
 }

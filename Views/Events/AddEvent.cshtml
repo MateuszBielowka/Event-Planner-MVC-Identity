@@ -1,0 +1,14 @@
+<h2>Dodaj Wydarzenia</h2>
+
+
+@if (ViewBag.Error != null)
+{
+    <div style="color:red">@ViewBag.Error</div>
+}
+<form method="post">
+    <input type="text" name="newEventName" placeholder="Nazwa wydarzenia" /><br />
+    <input type="text" name="newAddress" placeholder="Adres" /><br />
+    <input type="date" name="newDate" /><br />
+
+    <button type="submit">Zapisz</button>
+</form>
